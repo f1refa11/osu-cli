@@ -35,10 +35,10 @@ while 1:
         if len(c) == 1:
             for x in helpList[0]:
                 print(x)
-            print("Page 1/%s. Use 'h [num]' to switch to another page"%len(helpList))
+            print("Page 1/%s. Use 'h [num]' to switch to another page."%len(helpList))
         else:
             for x in helpList[int(c[1])-1]:
                 print(x)
-            print("Page %s/%s. Use 'h [num]' to switch to another page"%(c[1],len(helpList)))
+            print("Page %s/%s. Use 'h [num]' to switch to another page."%(c[1],len(helpList)))
     elif c[0] == "x":
         break
