@@ -1,14 +1,10 @@
-import sys,ossapi
-nocolor = True
-if not "-nc" in sys.argv:
-    print("Importing colorama...")
-    import colorama
-    nocolor = True
-print("Imporing os..")
+import sys,ossapi,json
 import os
-print("Getting console size...")
 ch = os.get_terminal_size().lines - 2
 os.system('cls')
+with open("private_data.json", encoding="utf-8") as f:
+    privateData = json.load(f)
+api = Ossapi(privateData["id"], privateData["key"])
 helpListSrc = [
     "'new' - show new maps",
     "'du [url]' - download via url",
