@@ -1,4 +1,4 @@
-import sys,pprint
+import sys,ossapi
 nocolor = True
 if not "-nc" in sys.argv:
     print("Importing colorama...")
@@ -31,7 +31,9 @@ osu!cli - osu! download client and osu!direct alternative
 while 1:
     c = input("> ").split()
     os.system('cls')
-    if c[0] == "h":
+    if c[0] == "new":
+        pass
+    elif c[0] == "h":
         if len(c) == 1:
             for x in helpList[0]:
                 print(x)
