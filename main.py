@@ -20,11 +20,12 @@ helpListSrc = [
     "'selurl [url] - select beatmap via url",
     "'p [num]' - switch to the page",
     "'setup' - configure osu! directory",
+    "'x' - exit the program"
 ]
 helpList = [helpListSrc[i:i + ch] for i in range(0, len(helpListSrc), ch)]
 print("""
 \n
-osu!dl - osu! download client and osu!direct alternative
+osu!cli - osu! download client and osu!direct alternative
 'h' to show all commands, 'x' to exit
 \n""")
 while 1:
@@ -36,7 +37,8 @@ while 1:
                 print(x)
             print("Page 1/%s. Use 'h [num]' to switch to another page"%len(helpList))
         else:
-            for x in helpList[c[1]]:
-                print()
+            for x in helpList[int(c[1])-1]:
+                print(x)
+            print("Page %s/%s. Use 'h [num]' to switch to another page"%(c[1],len(helpList)))
     elif c[0] == "x":
         break
