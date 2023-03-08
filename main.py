@@ -2,8 +2,14 @@ import sys,ossapi,json
 import os
 ch = os.get_terminal_size().lines - 2
 os.system('cls')
-with open("private_data.json", encoding="utf-8") as f:
-    privateData = json.load(f)
+def openJSON(filename):
+    with open(filename, encoding="utf-8") as f:
+        return json.load(f)
+def saveJSON(data, filename):
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(data, f)
+config = openJSON("config.json")
+privateData = openJSON("private_data.json")
 api = ossapi.Ossapi(privateData["id"], privateData["key"])
 helpListSrc = [
     "'new' - show new maps",
@@ -21,14 +27,17 @@ helpListSrc = [
 ]
 helpList = [helpListSrc[i:i + ch] for i in range(0, len(helpListSrc), ch)]
 print("""
-\n
 osu!cli - osu! download client and osu!direct alternative
-'h' to show all commands, 'x' to exit
-\n""")
+'h' to show all commands, 'x' to exit""")
 while 1:
     c = input("> ").split()
     os.system('cls')
-    if c[0] == "new":
+    if c[0] == "setup":
+        print("Please type the location to your osu! instance folder below. To paste the directory here press CTRL+SHIFT+V or right click with your mouse.")
+        loc = input("Directory: ")
+        config["dir"] = loc
+        saveJSON(config, "config.json")
+    elif c[0] == "new":
         print("Searching recent beatmaps...")
         searchResult = api.search_beatmapsets()
         os.system('cls')
