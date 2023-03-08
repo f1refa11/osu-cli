@@ -45,3 +45,5 @@ while 1:
             print("Page %s/%s. Use 'h [num]' to switch to another page."%(c[1],len(helpList)))
     elif c[0] == "x":
         break
+    else:
+        print("Unknown command: %s. Use 'h' to show list of all commands.")
