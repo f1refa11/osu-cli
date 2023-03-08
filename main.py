@@ -4,9 +4,10 @@ ch = os.get_terminal_size().lines - 2
 os.system('cls')
 with open("private_data.json", encoding="utf-8") as f:
     privateData = json.load(f)
-api = Ossapi(privateData["id"], privateData["key"])
+api = ossapi.Ossapi(privateData["id"], privateData["key"])
 helpListSrc = [
     "'new' - show new maps",
+    "'sm' - open search menu"
     "'du [url]' - download via url",
     "'dl [num]' - download from current list",
     "'di [id]' - download by id",
@@ -28,7 +29,11 @@ while 1:
     c = input("> ").split()
     os.system('cls')
     if c[0] == "new":
-        pass
+        print("Searching recent beatmaps...")
+        searchResult = api.search_beatmapsets()
+        os.system('cls')
+        for x in range(8):
+            print("["+str(searchResult.beatmapsets[x].id)+"] "+searchResult.beatmapsets[x].artist+" - "+searchResult.beatmapsets[x].title)
     elif c[0] == "h":
         if len(c) == 1:
             for x in helpList[0]:
