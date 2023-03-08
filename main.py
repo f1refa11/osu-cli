@@ -29,6 +29,8 @@ helpList = [helpListSrc[i:i + ch] for i in range(0, len(helpListSrc), ch)]
 print("""
 osu!cli - osu! download client and osu!direct alternative
 'h' to show all commands, 'x' to exit""")
+if config["dir"] == "":
+    print("[Warning] osu! folder location is not specified. Use 'setup' to fix this.")
 while 1:
     c = input("> ").split()
     os.system('cls')
@@ -37,6 +39,7 @@ while 1:
         loc = input("Directory: ")
         config["dir"] = loc
         saveJSON(config, "config.json")
+        print("Config file successfully changed")
     elif c[0] == "new":
         print("Searching recent beatmaps...")
         searchResult = api.search_beatmapsets()
