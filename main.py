@@ -67,6 +67,7 @@ while 1:
                     for i,data in enumerate(r.iter_content(1024)):
                         size = f.write(data)
                         pbar.update(len(data))
+                pbar.close()
                 print("Done!")
         elif c[0] == "h":
             if len(c) == 1:
