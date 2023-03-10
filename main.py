@@ -24,6 +24,7 @@ helpListSrc = [
     "'selid [id]' - select beatmap by id",
     "'selurl [url] - select beatmap via url",
     "'p [num]' - switch to the page",
+    "'lang [language or leave empty to get full list]' - set osu!cli language"
     "'setup' - configure osu! directory",
     "'x' - exit the program"
 ]
