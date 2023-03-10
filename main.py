@@ -1,4 +1,4 @@
-import ossapi,json,requests,os
+import ossapi,json,requests,os,re
 from tqdm import tqdm
 terminalData = os.get_terminal_size()
 ch = terminalData.lines - 2
@@ -60,15 +60,18 @@ while 1:
                 print("Connecting to Beatconnect...")
                 url = "https://beatconnect.io/b/%s/"%int(c[1])
                 r = requests.get(url, stream=True)
+                d = r.headers['content-disposition']
+                fname = re.findall("filename=(.+)", d)[0]
+                fname = re.sub('[";]', '', fname)
                 totalSize = int(r.headers.get("content-length", 0))
-                print("Connected! Downloading...")
-                with open("test.osz", "wb") as f:
+                print("Connected! Downloading as '%s'..."%fname)
+                with open("beatmaps/"+fname, "wb") as f:
                     pbar = tqdm(total=totalSize,desc="Progress: ",ncols=cols,unit="iB",unit_scale=True)
                     for i,data in enumerate(r.iter_content(1024)):
                         size = f.write(data)
                         pbar.update(len(data))
                 pbar.close()
-                print("Done!")
+                print("Done! Saved in beatmaps/%s. Use 'ir' to install the most recent downloaded beatmap or 'l' to check list of all downloaded beatmaps."%fname)
         elif c[0] == "h":
             if len(c) == 1:
                 for x in helpList[0]:
