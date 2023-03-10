@@ -28,8 +28,7 @@ helpListSrc = [
     "'x' - exit the program"
 ]
 helpList = [helpListSrc[i:i + ch] for i in range(0, len(helpListSrc), ch)]
-print("""
-osu!cli - osu! download client and osu!direct alternative
+print("""osu!cli - osu! download client and osu!direct alternative
 'h' to show all commands, 'x' to exit""")
 if config["dir"] == "":
     print("[Warning] osu! folder location is not specified. Use 'setup' to fix this.")
