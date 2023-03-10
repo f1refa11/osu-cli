@@ -1,6 +1,8 @@
-import sys,ossapi,json
-import os
-ch = os.get_terminal_size().lines - 2
+import ossapi,json,requests,os
+from tqdm import tqdm
+terminalData = os.get_terminal_size()
+ch = terminalData.lines - 2
+cols = terminalData.columns
 os.system('cls')
 def openJSON(filename):
     with open(filename, encoding="utf-8") as f:
@@ -34,28 +36,49 @@ if config["dir"] == "":
 while 1:
     c = input("> ").split()
     os.system('cls')
-    if c[0] == "setup":
-        print("Please type the location to your osu! instance folder below. To paste the directory here press CTRL+SHIFT+V or right click with your mouse.")
-        loc = input("Directory: ")
-        config["dir"] = loc
-        saveJSON(config, "config.json")
-        print("Config file successfully changed")
-    elif c[0] == "new":
-        print("Searching recent beatmaps...")
-        searchResult = api.search_beatmapsets()
-        os.system('cls')
-        for x in range(8):
-            print("["+str(searchResult.beatmapsets[x].id)+"] "+searchResult.beatmapsets[x].artist+" - "+searchResult.beatmapsets[x].title)
-    elif c[0] == "h":
-        if len(c) == 1:
-            for x in helpList[0]:
-                print(x)
-            print("Page 1/%s. Use 'h [num]' to switch to another page."%len(helpList))
+    if len(c) != 0:
+        if c[0] == "setup":
+            print("Please type the location to your osu! instance folder below. To paste the directory here press CTRL+SHIFT+V or right click with your mouse.")
+            loc = input("Directory: ")
+            config["dir"] = loc
+            saveJSON(config, "config.json")
+            print("Config file successfully changed")
+        elif c[0] == "new":
+            print("Searching recent beatmaps...")
+            searchResult = api.search_beatmapsets()
+            os.system('cls')
+            if len(c) == 1:
+                for x in range(ch):
+                    print("["+str(searchResult.beatmapsets[x].id)+"] "+searchResult.beatmapsets[x].artist+" - "+searchResult.beatmapsets[x].title)
+            else:
+                for x in range(int(c[1])):
+                    print("["+str(searchResult.beatmapsets[x].id)+"] "+searchResult.beatmapsets[x].artist+" - "+searchResult.beatmapsets[x].title)
+        elif c[0] == "di":
+            if len(c) == 1:
+                print("[Error] No ID specified")
+            else:
+                print("Connecting to Beatconnect...")
+                url = "https://beatconnect.io/b/%s/"%int(c[1])
+                r = requests.get(url, stream=True)
+                totalSize = int(r.headers.get("content-length", 0))
+                print("Connected! Downloading...")
+                with open("test.osz", "wb") as f:
+                    pbar = tqdm(total=totalSize,desc="Progress: ",ncols=cols,unit="iB",unit_scale=True)
+                    for i,data in enumerate(r.iter_content(1024)):
+                        size = f.write(data)
+                        pbar.update(len(data))
+                print("Done!")
+        elif c[0] == "h":
+            if len(c) == 1:
+                for x in helpList[0]:
+                    print(x)
+                print("Page 1/%s. Use 'h [num]' to switch to another page."%len(helpList))
+            else:
+                for x in helpList[int(c[1])-1]:
+                    print(x)
+                print("Page %s/%s. Use 'h [num]' to switch to another page."%(c[1],len(helpList)))
+        elif c[0] == "x":
+            break
         else:
-            for x in helpList[int(c[1])-1]:
-                print(x)
-            print("Page %s/%s. Use 'h [num]' to switch to another page."%(c[1],len(helpList)))
-    elif c[0] == "x":
-        break
-    else:
-        print("Unknown command: %s. Use 'h' to show list of all commands.")
+            print("Unknown command: '%s'. Use 'h' to show list of all commands."%c[0])
+#1683963
