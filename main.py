@@ -10,14 +10,18 @@ def openJSON(filename):
 def saveJSON(data, filename):
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f)
+def reloadLocalization():
+    global l,helpList
+    if config["lang"] == "ru":
+        l = openJSON("lang/ru.json")
+    elif config["lang"] == "en":
+        l = openJSON("lang/en.json")
+    helpList = [l["helpList"][i:i + ch] for i in range(0, len(l["helpList"]), ch)]
 config = openJSON("config.json")
-if config["lang"] == "ru":
-    l = openJSON("lang/ru.json")
-elif config["lang"] == "en":
-    l = openJSON("lang/en.json")
+langList = ["en", "ru"]
+reloadLocalization()
 privateData = openJSON("private_data.json")
 api = ossapi.Ossapi(privateData["id"], privateData["key"])
-helpList = [l["helpList"][i:i + ch] for i in range(0, len(l["helpList"]), ch)]
 print(l["welcome"])
 if config["dir"] == "":
     print(l["warningDir"])
@@ -60,6 +64,20 @@ while 1:
                         pbar.update(len(data))
                 pbar.close()
                 print(l["downloadSuccess"]%fname)
+        elif c[0] == "lang":
+            if len(c) == 1:
+                print("List of supported language codes:")
+                for x in langList:
+                    print('"%s"'%x)
+            else:
+                if c[1] in langList:
+                    config["lang"] = c[1]
+                    saveJSON(config, "config.json")
+                    print(l["saveConfigSuccess"])
+                    reloadLocalization()
+                    print(l["reloadLocalizationSuccess"])
+                else:
+                    print(l["langNotInList"])
         elif c[0] == "h":
             if len(c) == 1:
                 for x in helpList[0]:
