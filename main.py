@@ -1,44 +1,94 @@
-import sys,pprint
-nocolor = True
-if not "-nc" in sys.argv:
-    print("Importing colorama...")
-    import colorama
-    nocolor = True
-print("Imporing os..")
-import os
-print("Getting console size...")
-ch = os.get_terminal_size().lines - 2
+import ossapi,json,requests,os,re
+from tqdm import tqdm
+terminalData = os.get_terminal_size()
+ch = terminalData.lines - 2
+cols = terminalData.columns
 os.system('cls')
-helpListSrc = [
-    "'new' - show new maps",
-    "'du [url]' - download via url",
-    "'dl [num]' - download from current list",
-    "'di [id]' - download by id",
-    "'ds' - download selected beatmap(use sel)",
-    "'sel [num]' - select beatmap from the current list",
-    "'selid [id]' - select beatmap by id",
-    "'selurl [url] - select beatmap via url",
-    "'p [num]' - switch to the page",
-    "'setup' - configure osu! directory",
-    "'x' - exit the program"
-]
-helpList = [helpListSrc[i:i + ch] for i in range(0, len(helpListSrc), ch)]
-print("""
-\n
-osu!cli - osu! download client and osu!direct alternative
-'h' to show all commands, 'x' to exit
-\n""")
+def openJSON(filename):
+    with open(filename, encoding="utf-8") as f:
+        return json.load(f)
+def saveJSON(data, filename):
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(data, f)
+def reloadLocalization():
+    global l,helpList
+    if config["lang"] == "ru":
+        l = openJSON("lang/ru.json")
+    elif config["lang"] == "en":
+        l = openJSON("lang/en.json")
+    helpList = [l["helpList"][i:i + ch] for i in range(0, len(l["helpList"]), ch)]
+config = openJSON("config.json")
+langList = ["en", "ru"]
+reloadLocalization()
+privateData = openJSON("private_data.json")
+api = ossapi.Ossapi(privateData["id"], privateData["key"])
+print(l["welcome"])
+if config["dir"] == "":
+    print(l["warningDir"])
 while 1:
     c = input("> ").split()
     os.system('cls')
-    if c[0] == "h":
-        if len(c) == 1:
-            for x in helpList[0]:
-                print(x)
-            print("Page 1/%s. Use 'h [num]' to switch to another page"%len(helpList))
+    if len(c) != 0:
+        if c[0] == "setup":
+            print(l["setupDirDesc"])
+            loc = input(l["setupDir"])
+            config["dir"] = loc
+            saveJSON(config, "config.json")
+            print(l["saveConfigSuccess"])
+        elif c[0] == "new":
+            print(l["newMapSearchProgress"])
+            searchResult = api.search_beatmapsets()
+            os.system('cls')
+            if len(c) == 1:
+                for x in range(ch):
+                    print("["+str(searchResult.beatmapsets[x].id)+"] "+searchResult.beatmapsets[x].artist+" - "+searchResult.beatmapsets[x].title)
+            else:
+                for x in range(int(c[1])):
+                    print("["+str(searchResult.beatmapsets[x].id)+"] "+searchResult.beatmapsets[x].artist+" - "+searchResult.beatmapsets[x].title)
+        elif c[0] == "di":
+            if len(c) == 1:
+                print(l["idError1"])
+            else:
+                print(l["mirrorConnect"])
+                url = "https://beatconnect.io/b/%s/"%int(c[1])
+                r = requests.get(url, stream=True)
+                d = r.headers['content-disposition']
+                fname = re.findall("filename=(.+)", d)[0]
+                fname = re.sub('[";]', '', fname)
+                totalSize = int(r.headers.get("content-length", 0))
+                print(l["mirrorSuccess"]%fname)
+                with open("beatmaps/"+fname, "wb") as f:
+                    pbar = tqdm(total=totalSize,desc="Progress: ",ncols=cols,unit="iB",unit_scale=True)
+                    for i,data in enumerate(r.iter_content(1024)):
+                        size = f.write(data)
+                        pbar.update(len(data))
+                pbar.close()
+                print(l["downloadSuccess"]%fname)
+        elif c[0] == "lang":
+            if len(c) == 1:
+                print("List of supported language codes:")
+                for x in langList:
+                    print('"%s"'%x)
+            else:
+                if c[1] in langList:
+                    config["lang"] = c[1]
+                    saveJSON(config, "config.json")
+                    print(l["saveConfigSuccess"])
+                    reloadLocalization()
+                    print(l["reloadLocalizationSuccess"])
+                else:
+                    print(l["langNotInList"])
+        elif c[0] == "h":
+            if len(c) == 1:
+                for x in helpList[0]:
+                    print(x)
+                print(l["page"]%(1,len(helpList)))
+            else:
+                for x in helpList[int(c[1])-1]:
+                    print(x)
+                print(l["page"]%(c[1],len(helpList)))
+        elif c[0] == "x":
+            break
         else:
-            for x in helpList[int(c[1])-1]:
-                print(x)
-            print("Page %s/%s. Use 'h [num]' to switch to another page"%(c[1],len(helpList)))
-    elif c[0] == "x":
-        break
+            print(l["unknownCommand"]%c[0])
+#1683963

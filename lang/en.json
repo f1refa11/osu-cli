@@ -1,0 +1,31 @@
+{
+    "helpList": [
+        "'new' - show new beatmaps",
+        "'sm' - open advanced search menu",
+        "'du [url]' - download beatmap via url",
+        "'dl [num]' - download beatmap from current list",
+        "'di [id]' - download beatmap by id",
+        "'ds' - download selected beatmap(use sel)",
+        "'sel [num]' - select beatmap from the current list",
+        "'selid [id]' - select beatmap by id",
+        "'selurl [url] - select beatmap via url",
+        "'p [num]' - switch to the page",
+        "'lang [language or leave empty to get full list]' - set osu!cli language",
+        "'setup' - configure app",
+        "'x' - exit the program"
+    ],
+    "welcome":"osu!cli - osu! download client and osu!direct alternative.\n'h' to show all commands, 'x' to exit",
+    "warningDir": "[Warning] osu! folder location is not specified. Use 'setup' to fix this.",
+    "setupDirDesc": "Type the location to your osu! instance folder below. To paste the directory here press CTRL+SHIFT+V or right click with your mouse.",
+    "setupDir": "Directory:",
+    "saveConfigSuccess": "Config file successfully changed",
+    "reloadLocalizationSuccess": "App language successfully changed",
+    "langNotInList": "The language '%s' is not supported yet or doesn't exist. Try executing this command without any arguments to get a list of all supported languages.",
+    "newMapSearchProgress": "Searching recent beatmaps...",
+    "idError1": "[Error] No ID specified",
+    "mirrorConnect": "Connecting to the mirror...",
+    "mirrorSuccess": "Connected! Downloading as '%s'...",
+    "downloadSuccess": "Done! Saved in beatmaps/%s. Use 'ir' to install the most recent downloaded beatmap or 'l' to check list of all downloaded beatmaps.",
+    "page": "Page %s/%s. Use 'h [num]' to switch to another page.",
+    "unknownCommand": "Unknown command: '%s'. Use 'h' to show list of all commands."
+}
