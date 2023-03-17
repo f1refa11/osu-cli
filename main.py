@@ -91,4 +91,3 @@ while 1:
             break
         else:
             print(l["unknownCommand"]%c[0])
-#1683963
