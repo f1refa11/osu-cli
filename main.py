@@ -1,4 +1,4 @@
-import ossapi,json,requests,os,re
+import ossapi,json,requests,os,re,zipfile,shutil
 from tqdm import tqdm
 terminalData = os.get_terminal_size()
 ch = terminalData.lines - 2
@@ -64,6 +64,42 @@ while 1:
                         pbar.update(len(data))
                 pbar.close()
                 print(l["downloadSuccess"]%fname)
+        elif c[0] == "l":
+            print("Refreshing 'beatmaps/' folder...")
+            beatmapList = []
+            for file in os.listdir("beatmaps"):
+                if file.endswith(".osz"):
+                    beatmapList.append(os.path.splitext(file)[0])
+            result = [beatmapList[i:i + (ch-1)] for i in range(0, len(beatmapList), (ch-1))]
+            if len(beatmapList) == 0:
+                print("No beatmaps found! You can download them using download commands - 'di', 'du', 'ds' or 'dl'")
+            else:
+                os.system('cls')
+                print("List of imported beatmaps:")
+                if len(c) == 1:
+                    for x in result[0]:
+                        print(x)
+                    print(l["pageList"]%(1,len(helpList)))
+                else:
+                    for x in result[int(c[1])-1]:
+                        print(x)
+                    print(l["pageList"]%(c[1],len(helpList)))
+        elif c[0] == "da":
+            print("Importing beatmaps...")
+            pbar = tqdm(total=len(os.listdir("beatmaps")),desc="Progress: ",ncols=cols)
+            os.chdir("beatmaps")
+            for beatmap in os.listdir("."):
+                if beatmap.endswith(".osz"):
+                    dirName = os.path.splitext(beatmap)[0]
+                    os.mkdir(dirName)
+                    pbar.update(8/7/4)
+                    zipFile = zipfile.ZipFile(beatmap, "r")
+                    pbar.update(8/7/4)
+                    zipFile.extractall(dirName)
+                    pbar.update(8/7/4)
+                    shutil.move(dirName, os.path.join(config["dir"], "Songs", dirName))
+                    pbar.update(8/7/4)
+            pbar.close()
         elif c[0] == "lang":
             if len(c) == 1:
                 print("List of supported language codes:")
@@ -82,11 +118,11 @@ while 1:
             if len(c) == 1:
                 for x in helpList[0]:
                     print(x)
-                print(l["page"]%(1,len(helpList)))
+                print(l["pageHelp"]%(1,len(helpList)))
             else:
                 for x in helpList[int(c[1])-1]:
                     print(x)
-                print(l["page"]%(c[1],len(helpList)))
+                print(l["pageHelp"]%(c[1],len(helpList)))
         elif c[0] == "x":
             break
         else:
