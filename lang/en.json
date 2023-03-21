@@ -26,6 +26,7 @@
     "mirrorConnect": "Connecting to the mirror...",
     "mirrorSuccess": "Connected! Downloading as '%s'...",
     "downloadSuccess": "Done! Saved in beatmaps/%s. Use 'ir' to install the most recent downloaded beatmap or 'l' to check list of all downloaded beatmaps.",
-    "page": "Page %s/%s. Use 'h [num]' to switch to another page.",
+    "pageHelp": "Page %s/%s. Use 'h [num]' to switch to another page.",
+    "pageList": "Page %s/%s. Use 'l [num]' to switch to another page.",
     "unknownCommand": "Unknown command: '%s'. Use 'h' to show list of all commands."
 }
